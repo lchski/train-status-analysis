@@ -8,7 +8,21 @@ status_files <- fs::dir_ls(status_dir, glob = "*.csv")
 
 working_timezone <- "Canada/Eastern" # assume VIA works in Eastern time, so we transpose when we cast `as_datetime`
 
-statuses_raw <- map_df(status_files, read_csv, .id = "source_file") %>%
+statuses_raw <- map_dfr(status_files, read_csv, .id = "source_file", col_types = cols(
+  train = col_character(),
+  arrived = col_logical(),
+  departed = col_logical(),
+  direction = col_double(),
+  from = col_character(),
+  lat = col_double(),
+  lng = col_double(),
+  poll = col_datetime(format = ""),
+  pollMin = col_double(),
+  pollRadius = col_double(),
+  speed = col_double(),
+  times = col_character(),
+  to = col_character()
+)) %>%
   clean_names %>%
   mutate(
     source_file = str_remove_all(source_file, status_dir),
