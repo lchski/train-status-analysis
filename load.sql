@@ -9,5 +9,5 @@ ALTER TABLE times ADD COLUMN difference_s INTEGER;
 
 UPDATE times
 	SET
-		difference = arrival_actual - arrival_scheduled
+		difference = arrival_actual - arrival_scheduled,
 		difference_s = date_diff('second', arrival_scheduled, arrival_actual);
