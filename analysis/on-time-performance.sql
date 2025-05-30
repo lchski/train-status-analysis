@@ -1,4 +1,7 @@
 CREATE OR REPLACE MACRO times_for_service(train_id_oi, station_code_oi) AS TABLE (
+	SELECT
+		*,
+		round(difference_s / 60) AS difference_m
 	FROM times
 		WHERE
 			train_id = train_id_oi::VARCHAR AND
