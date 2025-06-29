@@ -1,17 +1,17 @@
-CREATE OR REPLACE MACRO times_for_service(train_id_oi, station_code_oi) AS TABLE (
+CREATE OR REPLACE MACRO times_for_service(train_id_oi, stop_code_oi) AS TABLE (
 	SELECT
 		*,
 		round(difference_s / 60) AS difference_m
 	FROM times
 		WHERE
 			train_id = train_id_oi::VARCHAR AND
-			station_code = station_code_oi
+			stop_code = stop_code_oi
 );
 
-CREATE OR REPLACE MACRO summarize_on_time_performance(train_id_oi, station_code_oi) AS TABLE (
+CREATE OR REPLACE MACRO summarize_on_time_performance(train_id_oi, stop_code_oi) AS TABLE (
 	SELECT
 		train_id_oi::VARCHAR as train_id,
-		station_code_oi as station_code,
+		stop_code_oi as stop_code,
 		year(arrival_scheduled) as year,
 		count(*) as n,
 		min(difference) as min,
@@ -19,7 +19,7 @@ CREATE OR REPLACE MACRO summarize_on_time_performance(train_id_oi, station_code_
 		median(difference) as median,
 		mean(difference) as mean,
 		mode(difference) as mode
-	FROM times_for_service(train_id_oi, station_code_oi)
+	FROM times_for_service(train_id_oi, stop_code_oi)
 	GROUP BY
 		year
 	ORDER BY year
