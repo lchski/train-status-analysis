@@ -1,31 +1,15 @@
-CREATE TEMPORARY TABLE stations_raw AS
-	SELECT
-		DISTINCT(*)
-	FROM read_csv("../data/via-train-status-data/data/out/stations.tsv")
-	ORDER BY station_code;
+-- LOADING: stations
 
-UPDATE stations_raw
-	SET
-		station_name = 'Aleza Lake'
-	WHERE
-		station_code = 'ALZL' AND
-		station_name = 'Alzea Lake';
-
-UPDATE stations_raw
-	SET
-		station_name = 'Lac-Aux-Perles'
-	WHERE
-		station_code = 'PRLL' AND
-		station_name = 'Pearl Lake';
-
+--- Source: https://www.viarail.ca/en/developer-resources
 CREATE TABLE stations AS
 	SELECT
 		DISTINCT(*)
-	FROM stations_raw
-	ORDER BY station_code;
+	FROM read_csv("data/source/viarail.ca/via-gtfs/stops.txt")
+	ORDER BY stop_code;
 
 
 
+-- LOADING: times
 CREATE TABLE times AS
 	SELECT
 		DISTINCT(*)
@@ -42,3 +26,13 @@ UPDATE times
 	SET
 		difference = arrival_actual - arrival_scheduled,
 		difference_s = date_diff('second', arrival_scheduled, arrival_actual);
+
+-- CLEANING
+
+--- To identify errant station codes:
+--- SELECT stop_code, COUNT(*) AS n FROM times WHERE char_length(stop_code) > 4 GROUP BY stop_code;
+UPDATE times
+	SET
+		stop_code = 'ALZL'
+	WHERE
+		stop_code = 'Aleza Lake';
